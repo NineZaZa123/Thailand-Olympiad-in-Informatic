@@ -1,53 +1,73 @@
 #include<bits/stdc++.h>
-#define pii pair<int,int>
-#define piii pair<pii,pair<pii,pii>>
+#define ll long long
+#define pii pair<ll,ll>
+#define piii pair<pii,pii>
 using namespace std;
 
-const int N=1501;
-int n;
-int xt,yt,x,y;
-vector<pii>a,b,c,d,ab;
-vector<piii>abpos;
+const int MOD=5e6+11;
+ll n,tx,ty;
+int mx;
+piii hs[MOD];
+vector<pii>v1,v2,v3,v4;
 
 int main(){
     ios_base::sync_with_stdio(0),cin.tie(0);
-    cin >> xt >> yt >> n;
+    cin >> tx >> ty >> n;
+    for(int i=0; i<MOD; i++)hs[i]={{LLONG_MAX,LLONG_MAX},{LLONG_MAX,LLONG_MAX}};
     for(int i=1; i<=n; i++){
+        ll x,y;
         cin >> x >> y;
-        a.push_back({x,y});
+        v1.push_back({x,y});
     }
     for(int i=1; i<=n; i++){
+        ll x,y;
         cin >> x >> y;
-        b.push_back({x,y});
+        v2.push_back({x,y});
     }
-    for(int i=1; i<=n; i++){
-        cin >> x >> y;
-        c.push_back({x,y});
-    }
-    for(int i=1; i<=n; i++){
-        cin >> x >> y;
-        d.push_back({x,y});
-    }
-    for(int i=0; i<n; i++){
-        for(int j=0; j<n; j++){
-            abpos.push_back({{a[i].first+b[j].first,a[i].second+b[j].second},{{a[i].first,a[i].second},{b[j].first,b[j].second}}});
+    for(pii xy1:v1){
+        for(pii xy2:v2){
+            ll x1=xy1.first,y1=xy1.second;
+            ll x2=xy2.first,y2=xy2.second;
+            ll xx=x1+x2,yy=y1+y2;
+            ll idx=(((xx+yy)*3)%MOD+MOD)%MOD;
+            int cnt=0;
+            while(1){
+                if(hs[idx].first.first==LLONG_MAX){
+                    hs[idx]={{x1,y1},{x2,y2}};
+                    break;
+                }
+                idx++;
+                idx%=MOD;
+                cnt++;
+                mx=max(mx,cnt);
+            }
         }
     }
-    sort(abpos.begin(),abpos.end());
-    for(int i=0; i<abpos.size(); i++){
-        ab.push_back({abpos[i].first});
+    for(int i=1; i<=n; i++){
+        ll x,y;
+        cin >> x >> y;
+        v3.push_back({x,y});
     }
-    for(int i=0; i<n; i++){
-        for(int j=0; j<n; j++){
-            int xx=c[i].first+d[j].first,yy=c[i].second+d[j].second;
-            pii tmp={xt-xx,yt-yy};
-            int idx=lower_bound(ab.begin(),ab.end(),tmp)-ab.begin();
-            if(ab[idx].first+xx==xt&&ab[idx].second+yy==yt){
-                cout << abpos[idx].second.first.first << ' ' << abpos[idx].second.first.second << '\n';
-                cout << abpos[idx].second.second.first << ' ' << abpos[idx].second.second.second << '\n';
-                cout << c[i].first << ' ' << c[i].second << '\n';
-                cout << d[j].first << ' ' << d[j].second;
-                break;
+    for(int i=1; i<=n; i++){
+        ll x,y;
+        cin >> x >> y;
+        v4.push_back({x,y});
+    }
+    for(pii xy3:v3){
+        for(pii xy4:v4){
+            ll x3=xy3.first,y3=xy3.second;
+            ll x4=xy4.first,y4=xy4.second;
+            ll xx=tx-(x3+x4),yy=ty-(y3+y4);
+            ll idx=(((xx+yy)*3)%MOD+MOD)%MOD;
+            for(int i=0; i<=mx; i++,idx++){
+                idx%=MOD;
+                if(hs[idx].first.first+hs[idx].second.first+x3+x4==tx&&hs[idx].first.second+hs[idx].second.second+y3+y4==ty){
+                    cout << hs[idx].first.first << ' ' << hs[idx].first.second << '\n';
+                    cout << hs[idx].second.first << ' ' << hs[idx].second.second << '\n';
+                    cout << x3 << ' ' << y3 << '\n';
+                    cout << x4 << ' ' << y4;
+                    return 0;
+                }
             }
         }
     }
